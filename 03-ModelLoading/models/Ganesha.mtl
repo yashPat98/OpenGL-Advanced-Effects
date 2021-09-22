@@ -1,0 +1,50 @@
+# Blender MTL File: 'None'
+# Material Count: 4
+
+newmtl GOLD__DARK_
+Ns 69.000007
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 0.615700 0.239200
+Ks 0.510000 0.510000 0.510000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+
+newmtl G_LR_Stone
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump G-LR_01___Default_Normal.png
+map_Kd G-LR_My1_Diffuse.jpg
+map_Ks G-LR_Ambient-Occlusion.jpg
+
+newmtl Veg
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd Veg_DiffuseMap.jpg
+map_d Veg_AlphaMap.jpg
+
+newmtl _Lastrone_Roccia_A1CL_Lastrone_LR1
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump CL_Lastrone_LR1_1NormalsMap.jpg
+map_Kd CL_Lastrone_LR1_1DiffuseMap.jpg
