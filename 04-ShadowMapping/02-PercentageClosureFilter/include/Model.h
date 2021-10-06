@@ -165,6 +165,9 @@ class Model
             std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "normal_texture");
             textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
+            std::vector<Texture> ambientMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "ambient_texture");
+            textures.insert(textures.end(), ambientMaps.begin(), ambientMaps.end());
+
             return Mesh(vertices, indices, textures, temp_material);
         }
 

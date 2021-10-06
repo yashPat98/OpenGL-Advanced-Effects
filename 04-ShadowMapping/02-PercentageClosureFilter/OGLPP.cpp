@@ -101,19 +101,7 @@ vec3 lightPosition;
 GLsizei win_width;
 GLsizei win_height;
 
-vec3 camera_pos;
-vec3 camera_front;
-vec3 camera_up;
-float camera_speed = 1.0f;
-float sensitivity = 0.1f;
-bool first_mouse = true;
-float yaw = -90.0f;
-float pitch = 0.0f;
-float last_x = 800.0f / 2.0f;
-float last_y = 600.0f / 2.0f;
-float fov = 45.0f;
-
-Model Ganesha;
+Model Robo;
 
 //windows entry point function
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
@@ -265,30 +253,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
                 case VK_f:
                     ToggleFullscreen();
                     break;
-                
-                case VK_UP:
-                    camera_pos += camera_speed * camera_front;
-                    break;
-
-                case VK_DOWN:
-                    camera_pos -= camera_speed * camera_front;
-                    break;
-
-                case VK_LEFT:
-                    camera_pos -= normalize(cross(camera_front, camera_up)) * camera_speed;
-                    break;
-                
-                case VK_RIGHT:
-                    camera_pos += normalize(cross(camera_front, camera_up)) * camera_speed;
-                    break;
 
                 default:
                     break;
             }
-            break;
-
-        case WM_MOUSEMOVE:
-            mouse_move(LOWORD(lParam), HIWORD(lParam));
             break;
 
         case WM_CLOSE:                           //event : window is closed from sysmenu or close button
@@ -373,44 +341,6 @@ void ToggleFullscreen(void)
         ShowCursor(true);            //show cursor
         gbFullscreen = false;
     }
-}
-
-void mouse_move(double xPos, double yPos)
-{
-    if(first_mouse)
-    {
-        last_x = xPos;
-        last_y = yPos;
-        first_mouse = false;
-    }
-
-    float xoffset = xPos - last_x;
-    float yoffset = last_y - yPos;
-    last_x = xPos;
-    last_y = yPos;
-
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if(pitch > 89.0f)
-    {
-        pitch = 89.0f;
-    }
-
-    if(pitch < -89.0f)
-    {
-        pitch = -89.0f;
-    }
-
-    vec3 front;
-    front[0] = cos(radians(yaw)) * cos(radians(pitch));
-    front[1] = sin(radians(pitch));
-    front[2] = sin(radians(yaw)) * cos(radians(pitch));
-
-    camera_front = normalize(front);
 }
 
 void Initialize(void)
@@ -533,6 +463,11 @@ void Initialize(void)
         "uniform vec3 u_lightPos;"                                                          \
         "uniform vec3 u_viewPos;"                                                           \
 
+        "mat4 scale_bias_matrix = mat4(vec4(0.5f, 0.0f, 0.0f, 0.0f),"                       \
+        "                              vec4(0.0f, 0.5f, 0.0f, 0.0f),"                       \
+        "                              vec4(0.0f, 0.0f, 0.5f, 0.0f),"                       \
+        "                              vec4(0.5f, 0.5f, 0.5f, 1.0f));"                      \
+
         "void main(void)"                                                                   \
         "{"                                                                                 \
         "   out_fragPos = vec3(u_modelMatrix * vec4(vPosition, 1.0f));"                     \
@@ -548,7 +483,7 @@ void Initialize(void)
         "   out_tangentLightPos = TBN * u_lightPos;"                                        \
         "   out_tangentViewPos = TBN * u_viewPos;"                                          \
         "   out_tangentFragPos = TBN * out_fragPos;"                                        \
-        "   out_shadowCoord = u_shadowMatrix * vec4(out_fragPos, 1.0f);"                    \
+        "   out_shadowCoord = scale_bias_matrix * u_shadowMatrix * vec4(out_fragPos, 1.0f);"\
 
         "   gl_Position = u_projectionMatrix * u_viewMatrix * vec4(out_fragPos, 1.0f);"     \
         "}";
@@ -595,7 +530,8 @@ void Initialize(void)
         "layout(binding = 0)uniform sampler2D diffuse_texture;"                                                     \
         "layout(binding = 1)uniform sampler2D specular_texture;"                                                    \
         "layout(binding = 2)uniform sampler2D normal_texture;"                                                      \
-        "layout(binding = 3)uniform sampler2DShadow depth_texture;"                                                 \
+        "layout(binding = 3)uniform sampler2D ambient_texture;"                                                     \
+        "layout(binding = 4)uniform sampler2DShadow depth_texture;"                                                 \
 
         "uniform vec3 u_lightAmbient;"                                                                              \
         "uniform vec3 u_lightDiffuse;"                                                                              \
@@ -624,8 +560,9 @@ void Initialize(void)
         "   normal = normalize(normal * 2.0f - 1.0f);"                                                              \
 
             //ambient
-        "   vec3 ambient = u_lightAmbient * u_matAmbient * texture(diffuse_texture, out_texCoord).rgb;"             \
-            
+        "   vec3 ao = texture(ambient_texture, out_texCoord).rgb;"                                                  \
+        "   vec3 ambient = u_lightAmbient * u_matAmbient * ao * texture(diffuse_texture, out_texCoord).rgb;"        \
+        
             //diffuse
         "   vec3 light_direction = normalize(out_tangentLightPos - out_tangentFragPos);"                            \
         "   float diff = max(dot(light_direction, normal), 0.0f);"                                                  \
@@ -638,24 +575,21 @@ void Initialize(void)
         "   float spec = pow(max(dot(normal, halfway_direction), 0.0f), u_matShininess);"                           \
         "   vec3 specular = u_lightSpecular * u_matSpecular * spec * texture(specular_texture, out_texCoord).rgb;"  \
 
+        "   float bias = max(0.05f * (1.0f - dot(normal, light_direction)), 0.005f);"                               \
+        "   vec2 texelSize = 1.0f / textureSize(depth_texture, 0);"                                                 \
+
         "   float shadow = 0.0f;"                                                                                   \
-        "   vec2 texel_size = 1.0f / textureSize(depth_texture, 0);"                                                \
-        "   float bias = max(0.0005f * (1.0f - dot(normal, out_tangentLightPos)), 0.0005f);"                        \
         "   int count = 0;"                                                                                         \
-        "   for(float x = -1.0f; x <= 1.0f; x += 0.5f)"                                                             \
+        "   for(int x = -2; x <= 2; x++)"                                                                           \
         "   {"                                                                                                      \
-        "       for(float y = -1.0f; y <= 1.0f; y += 0.5f)"                                                         \
+        "       for(int y = -2; y <= 2; y++)"                                                                       \
         "       {"                                                                                                  \
-        "           float pcf_depth = textureProj(depth_texture, vec4(out_shadowCoord.xy + vec2(x, y) * texel_size * out_shadowCoord.w, out_shadowCoord.z, out_shadowCoord.w));"        \
-        "           if(out_shadowCoord.z - bias > pcf_depth)"                                                       \
-        "           {"                                                                                              \
-        "               shadow += pcf_depth;"                                                                       \
-        "           }"                                                                                              \
+        "           shadow += textureProj(depth_texture, vec4(out_shadowCoord.xy + vec2(x, y) * texelSize * out_shadowCoord.w, out_shadowCoord.z, out_shadowCoord.w), bias);"       \
         "           count++;"                                                                                       \
         "       }"                                                                                                  \
         "   }"                                                                                                      \
-        
         "   shadow = shadow / count;"                                                                               \
+
         "   vec3 ads_light = ambient + shadow * (diffuse + specular);"                                              \
         "   FragColor = vec4(ads_light, 1.0f);"                                                                     \
         "}";                 
@@ -1034,21 +968,17 @@ void Initialize(void)
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);    
 
     //set clearing color
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);  
 
     //set up global variables
     perspectiveProjectionMatrix = mat4::identity();
     lightPosition = vmath::vec3(50.0f, 30.0f, 50.0f);
-    Ganesha.LoadModel("models/Ganesha.obj");
+    Robo.LoadModel("models/Robo.obj");
 
     //load textures
     loadGLTexture(&floor_diffuse_texture, "textures/marble_albedo.png");
     loadGLTexture(&floor_specular_texture, "textures/marble_roughness.png");
     loadGLTexture(&floor_normal_texture, "textures/marble_normal.png");
-
-    camera_pos = vec3(0.0f, 10.0f, 50.0f);
-    camera_front = vec3(0.0f, 0.0f, 0.0f);
-    camera_up = vec3(0.0f, 1.0f, 0.0f);
 
     //warm-up  call
     Resize(WIN_WIDTH, WIN_HEIGHT);
@@ -1118,11 +1048,6 @@ void Display(void)
     mat4 light_viewMatrix;
     mat4 light_projectionMatrix;
 
-    mat4 scale_bias_matrix = mat4(vec4(0.5f, 0.0f, 0.0f, 0.0f),
-                                  vec4(0.0f, 0.5f, 0.0f, 0.0f),
-                                  vec4(0.0f, 0.0f, 0.5f, 0.0f),
-                                  vec4(0.5f, 0.5f, 0.5f, 1.0f));
-
     static GLfloat light_angle = 0.0f;
 
     //code
@@ -1150,6 +1075,7 @@ void Display(void)
         //to resolve depth-fighting issues
         glEnable(GL_POLYGON_OFFSET_FILL);
         glPolygonOffset(2.0f, 4.0f);
+        glCullFace(GL_FRONT);
 
         glUseProgram(pass_shaderProgramObject);
             //render the scene from light's perspective
@@ -1166,7 +1092,7 @@ void Display(void)
             mvpMatrix = light_projectionMatrix * light_viewMatrix * modelMatrix;
             glUniformMatrix4fv(pass_mvpMatrixUniform, 1, GL_FALSE, mvpMatrix);
 
-            Ganesha.Draw(pass_shaderProgramObject);
+            Robo.Draw(pass_shaderProgramObject);
         
             //Draw Floor
             modelMatrix = mat4::identity();
@@ -1183,6 +1109,7 @@ void Display(void)
 
         //reset states
         glDisable(GL_POLYGON_OFFSET_FILL);
+        glCullFace(GL_BACK);
         glViewport(0, 0, win_width, win_height);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);    
 
@@ -1190,12 +1117,12 @@ void Display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(shaderProgramObject);
         //set up scene view matrix 
-        viewMatrix = vmath::lookat(camera_pos, camera_pos + camera_front, camera_up);
+        viewMatrix = vmath::lookat(vec3(0.0f, 10.0f, 50.0f), vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
-        glUniform3fv(viewPosUniform, 1, camera_pos);     
+        glUniform3fv(viewPosUniform, 1, vec3(0.0f, 10.0f, 50.0f));     
 
         glUniform3fv(lightPositionUniform, 1, lightPosition);
-        glUniform3f(lightAmbientUniform, 0.2f, 0.2f, 0.2f);
+        glUniform3f(lightAmbientUniform, 0.3f, 0.3f, 0.3f);
         glUniform3f(lightDiffuseUniform, 1.0f, 1.0f, 1.0f);
         glUniform3f(lightSpecularUniform, 1.0f, 1.0f, 1.0f);
 
@@ -1204,7 +1131,7 @@ void Display(void)
         modelMatrix = vmath::translate(0.0f, -1.9f, 3.0f);
         modelMatrix = modelMatrix * vmath::scale(0.2f, 0.2f, 0.2f);
 
-        shadowMatrix = scale_bias_matrix * light_projectionMatrix * light_viewMatrix;
+        shadowMatrix = light_projectionMatrix * light_viewMatrix;
 
         glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, modelMatrix);
         glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -1215,7 +1142,7 @@ void Display(void)
         glBindTexture(GL_TEXTURE_2D, depth_texture);
         glUniform1i(depthTextureUniform, 3);
 
-        Ganesha.Draw(shaderProgramObject);
+        Robo.Draw(shaderProgramObject);
 
         //draw Floor
         modelMatrix = mat4::identity();
