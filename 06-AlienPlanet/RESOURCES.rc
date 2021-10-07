@@ -1,0 +1,14 @@
+#include "RESOURCES.h"
+
+MYICON          ICON        YIP.ico
+HEIGHTMAP       BITMAP      textures/height.bmp
+DIFFUSE_BITMAP  BITMAP      textures/diffuse.bmp 
+NORMAL_BITMAP   BITMAP      textures/normal.bmp 
+
+RIGHT_BITMAP    BITMAP      textures/right.bmp    
+LEFT_BITMAP     BITMAP      textures/left.bmp           
+TOP_BITMAP      BITMAP      textures/top.bmp        
+BOTTOM_BITMAP   BITMAP      textures/bottom.bmp         
+FRONT_BITMAP    BITMAP      textures/front.bmp          
+BACK_BITMAP     BITMAP      textures/back.bmp    
+
