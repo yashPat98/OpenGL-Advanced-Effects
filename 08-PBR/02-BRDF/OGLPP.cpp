@@ -2207,7 +2207,7 @@ void Display(void)
         glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
         glUniform3f(lightPositionUniform, light_translation, 5.0f, 0.0f);
-        glUniform3f(lightColorUniform, 150.0f, 150.0f, 150.0f);
+        glUniform3f(lightColorUniform, 350.0f, 350.0f, 350.0f);
         glUniform3fv(cameraPositionUniform, 1, camera.Position);
 
         glActiveTexture(GL_TEXTURE0);
