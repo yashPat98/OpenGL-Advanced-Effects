@@ -1,27 +1,27 @@
-# OpenGL-Advanced-Effects
-This Repository contains advanced OpenGL effects on windows platform
+# OpenGL-Advanced-Effects <br />
+This Repository contains advanced OpenGL effects on windows platform <br />
 
-I dont rely on IDEs like Visual Studios or QT 
-An experienced developer can figure out how to build the projects inside this repo
+I dont rely on IDEs like Visual Studios or QT  <br />
+An experienced developer can figure out how to build the projects inside this repo <br />
 
-Additional dependencies
-1 -> ASSIMP library for model loading (https://github.com/assimp/assimp)
-2 -> GLEW library for OpenGL core profile context (http://glew.sourceforge.net/)
+Additional dependencies <br />
+1 -> ASSIMP library for model loading (https://github.com/assimp/assimp) <br />
+2 -> GLEW library for OpenGL core profile context (http://glew.sourceforge.net/) <br />
 
-These projects are build using command line 
-following are the commands for visual studios developer command prompt 
+These projects are build using command line <br />
+following are the commands for visual studios developer command prompt <br />
 
-//compilation 
-cl.exe /c /EHsc OGLPP.cpp + (include path for assimp headers) + (include path for glew headers)
+//compilation <br />
+cl.exe /c /EHsc OGLPP.cpp + (include path for assimp headers) + (include path for glew headers) <br />
 
-//resource compilation
-rc.exe RESOURCES.rc
+//resource compilation <br />
+rc.exe RESOURCES.rc <br />
 
-//linking (dependent libraries are linked using compilar directive)
-link.exe OGLPP.obj RESOURCES.res
+//linking (dependent libraries are linked using compilar directive) <br />
+link.exe OGLPP.obj RESOURCES.res <br />
 
-//launch exe 
-OGLPP.exe
+//launch exe  <br />
+OGLPP.exe <br />
 
-if you still cant figure out how to build above projects 
-drop a mail at prime.ash75@gmail.com
+if you still cant figure out how to build above projects <br />
+drop a mail at prime.ash75@gmail.com <br />
