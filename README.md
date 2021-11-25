@@ -1,9 +1,6 @@
 # OpenGL-Advanced-Effects <br />
 This Repository contains advanced OpenGL effects on windows platform <br />
 
-I dont rely on IDEs like Visual Studios or QT  <br />
-An experienced developer can figure out how to build the projects inside this repo <br />
-
 Additional dependencies <br />
 1 -> ASSIMP library for model loading (https://github.com/assimp/assimp) <br />
 2 -> GLEW library for OpenGL core profile context (http://glew.sourceforge.net/) <br />
