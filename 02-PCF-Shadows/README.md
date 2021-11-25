@@ -1,27 +1,11 @@
-# OpenGL-Advanced-Effects <br />
-This Repository contains advanced OpenGL effects on windows platform <br />
+# Percentage Closure Filter Shadows <br />
 
-I dont rely on IDEs like Visual Studios or QT  <br />
-An experienced developer can figure out how to build the projects inside this repo <br />
+Windowing  : Win32 SDK            <br />
+Renderer   : OpenGL               <br />
+GPU        : NVIDIA GTX 1050 ti   <br />
 
-Additional dependencies <br />
-1 -> ASSIMP library for model loading (https://github.com/assimp/assimp) <br />
-2 -> GLEW library for OpenGL core profile context (http://glew.sourceforge.net/) <br />
+Model Loading using ASSIMP <br />
 
-These projects are build using command line <br />
-following are the commands for visual studios developer command prompt <br />
-
-//compilation <br />
-cl.exe /c /EHsc OGLPP.cpp + (include path for assimp headers) + (include path for glew headers) <br />
-
-//resource compilation <br />
-rc.exe RESOURCES.rc <br />
-
-//linking (dependent libraries are linked using compilar directive) <br />
-link.exe OGLPP.obj RESOURCES.res <br />
-
-//launch exe  <br />
-OGLPP.exe <br />
-
-if you still cant figure out how to build above projects <br />
-drop a mail at prime.ash75@gmail.com <br />
+![Screenshot (293)](https://user-images.githubusercontent.com/65341530/143403045-7f8c1d48-aa4c-4b53-874b-c69a4c77cbbc.png)
+![Screenshot (291)](https://user-images.githubusercontent.com/65341530/143403049-8d08d276-d10a-4cc5-89f8-e541320eb7ca.png)
+![Screenshot (292)](https://user-images.githubusercontent.com/65341530/143403055-70d577b3-6321-4bea-8a56-5c0d68bc162e.png)
