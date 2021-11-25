@@ -1,27 +1,13 @@
-# OpenGL-Advanced-Effects <br />
-This Repository contains advanced OpenGL effects on windows platform <br />
+# Atmospheric Scattering <br />
 
-I dont rely on IDEs like Visual Studios or QT  <br />
-An experienced developer can figure out how to build the projects inside this repo <br />
+Rendering physical approximation of atmospheric scattering (GPU Gems Implementation) <br />
 
-Additional dependencies <br />
-1 -> ASSIMP library for model loading (https://github.com/assimp/assimp) <br />
-2 -> GLEW library for OpenGL core profile context (http://glew.sourceforge.net/) <br />
+Windowing  : Win32 SDK            <br />
+Renderer   : OpenGL               <br />
+GPU        : NVIDIA GTX 1050 ti   <br />
 
-These projects are build using command line <br />
-following are the commands for visual studios developer command prompt <br />
+# Screenshots
 
-//compilation <br />
-cl.exe /c /EHsc OGLPP.cpp + (include path for assimp headers) + (include path for glew headers) <br />
-
-//resource compilation <br />
-rc.exe RESOURCES.rc <br />
-
-//linking (dependent libraries are linked using compilar directive) <br />
-link.exe OGLPP.obj RESOURCES.res <br />
-
-//launch exe  <br />
-OGLPP.exe <br />
-
-if you still cant figure out how to build above projects <br />
-drop a mail at prime.ash75@gmail.com <br />
+![Screenshot (289)](https://user-images.githubusercontent.com/65341530/143401436-b6033145-5d01-4969-aaec-93e43de3394c.png)
+![Screenshot (288)](https://user-images.githubusercontent.com/65341530/143401517-10ef3369-b24d-451e-9095-c8f37c90d1bd.png)
+![Screenshot (290)](https://user-images.githubusercontent.com/65341530/143401526-1749f724-db7a-4842-918e-c299d2388fd3.png)
